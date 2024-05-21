@@ -24,6 +24,7 @@ function getRecipesFromStorage() {
 	// A9. TODO - Complete the functionality as described in this function
 	//           header. It is possible in only a single line, but should
 	//           be no more than a few lines.
+	return JSON.parse(localStorage.getItem("recipes"));
 }
 
 /**
@@ -39,6 +40,12 @@ function addRecipesToDocument(recipes) {
 	//            create a <recipe-card> element for each one, and populate
 	//            each <recipe-card> with that recipe data using element.data = ...
 	//            Append each element to <main>
+	const main = document.querySelector("main");
+	for (const recipe of recipes) {
+		const newRecipe = document.createElement("recipe-card");
+		newRecipe.data = recipe;
+		main.appendChild(newRecipe);
+	}
 }
 
 /**
@@ -51,6 +58,10 @@ function saveRecipesToStorage(recipes) {
 	// B1. TODO - Complete the functionality as described in this function
 	//            header. It is possible in only a single line, but should
 	//            be no more than a few lines.
+
+	// const stringArray = String(recipes);
+
+	localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
 /**
@@ -76,4 +87,29 @@ function initFormHandler() {
 	// Steps B12 & B13 will occur inside the event listener from step B11
 	// B12. TODO - Clear the local storage
 	// B13. TODO - Delete the contents of <main>
+	const form = document.querySelector("form");
+	const main = document.querySelector("main");
+	form.addEventListener("submit", (event) => 
+	{
+		const newForm = new FormData(form);
+		const recipeObject = {};
+		for (const [key,value] of newForm.entries()) {
+			recipeObject[key] = value;
+		}
+		const newRecipe = document.createElement("recipe-card");
+		newRecipe.data = recipeObject;
+		main.appendChild(newRecipe);
+		const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+		recipes.push(recipeObject);
+		localStorage.setItem("recipes", JSON.stringify(recipes));
+	});
+
+	const clearStorage = document.querySelector('[type="button"]');
+	clearStorage.addEventListener("click", (event) => 
+	{
+		localStorage.clear();
+		while (main.firstChild) {
+			main.removeChild(main.lastChild);
+		}
+	});
 }
